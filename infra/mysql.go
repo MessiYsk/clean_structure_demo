@@ -1,9 +1,10 @@
 package infra
 
 import (
+	"log"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"log"
 )
 
 // NewGORM 创建 GORM 数据库连接

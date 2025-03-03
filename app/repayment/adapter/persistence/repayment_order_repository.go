@@ -10,7 +10,7 @@ import (
 
 // RepaymentOrderRepository 还款订单仓储实现
 type RepaymentOrderRepository struct {
-	db *gorm.DB // 数据库连接
+	DB *gorm.DB // 数据库连接
 }
 
 // toDBRepaymentOrder 将业务实体转换为数据库主单实体
@@ -69,19 +69,19 @@ func toDomainRepaymentOrderItem(item *dbmodel.RepaymentOrderItem) *model.Repayme
 // Save 保存还款订单（主单和子单分开存储）
 func (r *RepaymentOrderRepository) Save(order *model.RepaymentOrder) error {
 	ctx := context.Background()
-	db := r.db
+	DB := r.DB
 	if tx := ctx.Value("tx"); tx != nil {
-		db = tx.(*gorm.DB)
+		DB = tx.(*gorm.DB)
 	}
 
 	// 保存主单
-	if err := db.Save(toDBRepaymentOrder(order)).Error; err != nil {
+	if err := DB.Save(toDBRepaymentOrder(order)).Error; err != nil {
 		return err
 	}
 
 	// 保存子单
 	for _, item := range order.Items {
-		if err := db.Save(toDBRepaymentOrderItem(&item)).Error; err != nil {
+		if err := DB.Save(toDBRepaymentOrderItem(&item)).Error; err != nil {
 			return err
 		}
 	}
@@ -91,7 +91,7 @@ func (r *RepaymentOrderRepository) Save(order *model.RepaymentOrder) error {
 // FindByID 按 ID 查询还款订单
 func (r *RepaymentOrderRepository) FindByID(id string) (*model.RepaymentOrder, error) {
 	var dbOrder dbmodel.RepaymentOrder
-	if err := r.db.Where("id = ?", id).First(&dbOrder).Error; err != nil {
+	if err := r.DB.Where("id = ?", id).First(&dbOrder).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, nil
 		}
@@ -100,7 +100,7 @@ func (r *RepaymentOrderRepository) FindByID(id string) (*model.RepaymentOrder, e
 
 	// 查询子单
 	var dbItems []dbmodel.RepaymentOrderItem
-	if err := r.db.Where("order_id = ?", id).Find(&dbItems).Error; err != nil {
+	if err := r.DB.Where("order_id = ?", id).Find(&dbItems).Error; err != nil {
 		return nil, err
 	}
 	items := make([]model.RepaymentOrderItem, len(dbItems))
@@ -114,14 +114,14 @@ func (r *RepaymentOrderRepository) FindByID(id string) (*model.RepaymentOrder, e
 // FindByCreditCardID 按信用卡 ID 查询订单列表
 func (r *RepaymentOrderRepository) FindByCreditCardID(creditCardID string) ([]*model.RepaymentOrder, error) {
 	var dbOrders []dbmodel.RepaymentOrder
-	if err := r.db.Where("credit_card_id = ?", creditCardID).Find(&dbOrders).Error; err != nil {
+	if err := r.DB.Where("credit_card_id = ?", creditCardID).Find(&dbOrders).Error; err != nil {
 		return nil, err
 	}
 
 	orders := make([]*model.RepaymentOrder, len(dbOrders))
 	for i, dbOrder := range dbOrders {
 		var dbItems []dbmodel.RepaymentOrderItem
-		if err := r.db.Where("order_id = ?", dbOrder.ID).Find(&dbItems).Error; err != nil {
+		if err := r.DB.Where("order_id = ?", dbOrder.ID).Find(&dbItems).Error; err != nil {
 			return nil, err
 		}
 		items := make([]model.RepaymentOrderItem, len(dbItems))

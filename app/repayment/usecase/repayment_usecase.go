@@ -9,11 +9,11 @@ import (
 
 // RepaymentUseCase 定义还款用例层
 type RepaymentUseCase struct {
-	cardRepo   repository.ICreditCardRepository     // 信用卡仓储
-	orderRepo  repository.IRepaymentOrderRepository // 还款订单仓储
-	txManager  repository.TransactionManager        // 事务管理器
-	paymentSvc IPaymentService                      // 支付服务
-	payoutSvc  IPayoutService                       // 出款服务
+	CreditCardRepository     repository.ICreditCardRepository     // 信用卡仓储
+	RepaymentOrderRepository repository.IRepaymentOrderRepository // 还款订单仓储
+	TransactionManager       repository.TransactionManager        // 事务管理器
+	PaymentService           IPaymentService                      // 支付服务
+	PayoutService            IPayoutService                       // 出款服务
 }
 
 // ManualRepayResponse 手动还款响应
@@ -26,9 +26,9 @@ type ManualRepayResponse struct {
 func (uc *RepaymentUseCase) ManualRepay(ctx context.Context, creditCardID string, amount float64, fee float64) (*ManualRepayResponse, error) {
 	var order *model.RepaymentOrder
 	var cashierURL string
-	err := uc.txManager.WithTransaction(ctx, func(txCtx context.Context) error {
+	err := uc.TransactionManager.WithTransaction(ctx, func(txCtx context.Context) error {
 		// 获取信用卡信息
-		card, err := uc.cardRepo.FindByID(creditCardID)
+		card, err := uc.CreditCardRepository.FindByID(creditCardID)
 		if err != nil {
 			return err
 		}
@@ -38,12 +38,12 @@ func (uc *RepaymentUseCase) ManualRepay(ctx context.Context, creditCardID string
 		if err != nil {
 			return err
 		}
-		if err := uc.orderRepo.Save(order); err != nil {
+		if err := uc.RepaymentOrderRepository.Save(order); err != nil {
 			return err
 		}
 
 		// 调用支付服务获取收银台链接，并更新订单状态为支付中
-		cashierURL, err = uc.paymentSvc.CreatePayment(order.ID, amount+fee, card.BankAccountID)
+		cashierURL, err = uc.PaymentService.CreatePayment(order.ID, amount+fee, card.BankAccountID)
 		if err != nil {
 			return err
 		}
@@ -51,7 +51,7 @@ func (uc *RepaymentUseCase) ManualRepay(ctx context.Context, creditCardID string
 		if err := order.StartPayment(*debitItem); err != nil {
 			return err
 		}
-		return uc.orderRepo.Save(order)
+		return uc.RepaymentOrderRepository.Save(order)
 	})
 	if err != nil {
 		return nil, err

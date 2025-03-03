@@ -2,7 +2,7 @@
 package repaymentservice
 
 import (
-	repayment "clean_structure_demo/kitex_gen/repayment"
+	repayment "github.com/MessiYsk/clean_structure_demo/kitex_gen/repayment"
 	server "github.com/cloudwego/kitex/server"
 )
 

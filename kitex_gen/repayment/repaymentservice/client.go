@@ -3,8 +3,8 @@
 package repaymentservice
 
 import (
-	repayment "clean_structure_demo/kitex_gen/repayment"
 	"context"
+	repayment "github.com/MessiYsk/clean_structure_demo/kitex_gen/repayment"
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
 )

@@ -3,9 +3,9 @@
 package repaymentservice
 
 import (
-	repayment "clean_structure_demo/kitex_gen/repayment"
 	"context"
 	"errors"
+	repayment "github.com/MessiYsk/clean_structure_demo/kitex_gen/repayment"
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )

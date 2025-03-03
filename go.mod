@@ -1,17 +1,15 @@
-module clean_structure_demo
+module github.com/MessiYsk/clean_structure_demo
 
 go 1.23.4
 
-replace github.com/MessiYsk/clean_structure_demo => ../../../github.com/MessiYsk/clean_structure_demo
-
 require (
-	github.com/MessiYsk/clean_structure_demo v0.0.0-00010101000000-000000000000
 	github.com/cloudwego/gopkg v0.1.4
 	github.com/cloudwego/kitex v0.12.3
 	github.com/cloudwego/kitex/pkg/protocol/bthrift v0.0.0-20250303061253-3b89198bb372
 	github.com/google/wire v0.6.0
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.5.7
+	gorm.io/driver/sqlite v1.5.7
 	gorm.io/gorm v1.25.12
 )
 
@@ -41,6 +39,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
